@@ -3,50 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Github VIewer</title>
+    <title>Github Profile Viewer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #84fab0, #8fd3f4);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #84fab0;
+            outline: none;
+            box-shadow: 0 0 5px rgba(132, 250, 176, 0.5);
+        }
+
+        button {
+            background: #84fab0;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #8fd3f4;
+        }
+
+        #profile {
+            margin-top: 20px;
+            text-align: left;
+            animation: slideUp 1s ease;
+        }
+
+        #profile h2 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        #profile img {
+            display: block;
+            margin: 0 auto 10px;
+            border: 3px solid #84fab0;
+            transition: transform 0.3s ease;
+        }
+
+        #profile img:hover {
+            transform: scale(1.1);
+        }
+
+        #profile h4 {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Github Profile Viewer</h1>
-        <input type="text" id="username" placeholder="Enter you username">
-        <Button onclick="fetchProfile()">Get Profile</Button>
+        <input type="text" id="username" placeholder="Enter a Github username">
+        <button onclick="fetchProfile()">Get Profile</button>
         <div id="profile"></div>
     </div>
     <script>
-        function fetchProfile(){
-            const username = document.getElementById('username').value
-            if(!username){
-                alert('Enter a Github username')
-                return
+        function fetchProfile() {
+            const username = document.getElementById('username').value;
+            if (!username) {
+                alert('Enter a Github username');
+                return;
             }
-            fetch(`https://api.github.com/users/${username}`).then(response => {
-                if(!response.ok) {
-                    throw new Error('Network Response is not OK')
-                }
-                return response.json();
-            })
-            .then(data => {
-                displayProfile(data)
-            })
-            .catch(err => {
-                console.error("There was a problem with the fetch operation",err)
-            })
+            fetch(`https://api.github.com/users/${username}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response is not OK');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayProfile(data);
+                })
+                .catch(err => {
+                    console.error("There was a problem with the fetch operation", err);
+                });
         }
-
-        function displayProfile(profileData){
-            const profileElement = document.getElementById('profile')
+        function displayProfile(profileData) {
+            const profileElement = document.getElementById('profile');
             profileElement.innerHTML = `
             <h2>${profileData.login}</h2>
-            <img src="${profileData.avatar_url}" style="width:100px";
-            height:100px; border-radius:50% /> 
-            <h4>Profile ID = ${profileData.id}</h4>
-            <h4>Name = ${profileData.name}</h4>
-            <h4>Company = ${profileData.company}</h4>
-            <h4>Location = ${profileData.location}</h4>
-            <h4>Profile Created = ${profileData.created_at}</h4>
-            <h4>Public Repositories = ${profileData.public_repos}</h4>
-            
-            `
+            <img src="${profileData.avatar_url}" alt="${profileData.login}'s avatar" style="width: 100px; height: 100px; border-radius: 50%;" />
+            <h4><strong>ID:</strong> ${profileData.id}</h4>
+            <h4><strong>Name:</strong> ${profileData.name ? profileData.name : 'N/A'}</h4>
+            <h4><strong>Company:</strong> ${profileData.company ? profileData.company : 'N/A'}</h4>
+            <h4><strong>Location:</strong> ${profileData.location ? profileData.location : 'N/A'}</h4>
+            <h4><strong>Profile Created:</strong> ${new Date(profileData.created_at).toDateString()}</h4>
+            <h4><strong>Public Repositories:</strong> ${profileData.public_repos}</h4>
+            `;
         }
     </script>
 </body>
